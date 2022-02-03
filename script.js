@@ -13,7 +13,6 @@ function createCustomElement(element, className, innerText) {
 }
 
 function createProductItemElement({ sku, name, image }) {
-  fetchProducts();
   const section = document.createElement('section');
   section.className = 'item';
 
@@ -25,26 +24,12 @@ function createProductItemElement({ sku, name, image }) {
   return section;
 }
 
-const encontrarItem = async () => {
-  const fetchObjeto = await fetchProducts('computador');
-  fetchObjeto.map((element) => ({
-    sku: element.id,
-    name: element.title,
-    image: element.thumbnail,
-  }))
-  .forEach((element) => {
-    const items = document.querySelector('.items');
-    items.appendChild(createProductItemElement(element));
-  });
-};
+function cartItemClickListener(event) {
+  event.target.parentElement.removeChild(event.target);
+}
 
 function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
-}
-// getSkuFromProductItem('computador')
-
-function cartItemClickListener(event) {
-  // coloque seu código aqui
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -54,8 +39,28 @@ function createCartItemElement({ sku, name, salePrice }) {
   li.addEventListener('click', cartItemClickListener);
   return li;
 }
+// tive ajuda dos colegas de turma Sheila Allelo, e Wendryo para desenvolver a logica de por o item no carrinho.
+const itemParaCarrinho = async (event) => {
+  const skuId = getSkuFromProductItem(event.target.parentElement);
+  const response = await fetchItem(skuId);
+    const objeto = { sku: skuId, name: response.title, salePrice: response.price };
+  const resultado = createCartItemElement(objeto);
+  const cartItems = document.querySelector('.cart__items');
+  cartItems.appendChild(resultado);
+};
+
+const encontrarItem = async (product) => {
+  const produtos = await fetchProducts(product);
+  produtos.results.forEach((element) => {
+    const objeto = { sku: element.id, name: element.title, image: element.thumbnail };
+    const resultado = createProductItemElement(objeto);
+    const items = document.querySelector('.items');
+    items.appendChild(resultado);
+  });
+  const botaoAdd = document.querySelectorAll('.item__add');
+  botaoAdd.forEach((element) => element.addEventListener('click', itemParaCarrinho));
+};
 
 window.onload = () => {
-  encontrarItem();
-
+  encontrarItem('computador');
 };
