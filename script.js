@@ -1,6 +1,24 @@
 const items = document.querySelector('.items');
 const itensCart = document.querySelector('.cart__items');
 const botaoApagar = document.querySelector('.empty-cart');
+const total = document.querySelector('.total-price');
+
+const somaPreco = () => { // tive muita ajuda do Wendryo nesta parte
+  const produtoCart = document.querySelectorAll('.cart__item');
+  let preco = 0;
+  produtoCart.forEach((element) => {
+    const valor = element.innerText;
+    const valorIndexOf = valor.indexOf('$') + 1; // Nesta documentação de JavaScript veremos como o método indexOf() do objeto String pode ser utilizado para recuperar a posição inicial de um elemento, dentro de uma sequência de caracteres. >>> site DevMedia ..... o + 1 é para procurar o proximo e depois o proximo.
+    const valorAposIndexOf = valor.substr(valorIndexOf);// substr() O método substr() retorna uma parte da string, começando no índice especificado e estendendo-se por um determinado número de caracteres posteriormente. >>> documentação do MDN
+    const passandoParaNumero = Number(valorAposIndexOf);
+    preco += passandoParaNumero;
+  });
+  return preco // .toFixed(2); // toFixed()método arredonda a string para um número especificado de decimais. >>>> w3schools
+};
+
+const precoTotal = () => {
+  total.innerHTML = somaPreco();
+};
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -31,6 +49,7 @@ function createProductItemElement({ sku, name, image }) {
 function cartItemClickListener(event) {
   event.target.remove();
   saveCartItems(itensCart.innerHTML);
+  precoTotal();
 }
 
 function getSkuFromProductItem(item) {
@@ -54,6 +73,7 @@ function createCartItemElement({ sku, name, salePrice }) {
   li.addEventListener('click', cartItemClickListener);
   return li;
 }
+
 // tive ajuda dos colegas de turma Sheila Allelo, e Wendryo para desenvolver a logica de por o item no carrinho.
 const itemParaCarrinho = async (event) => {
   const skuId = getSkuFromProductItem(event.target.parentElement);
@@ -64,6 +84,7 @@ const itemParaCarrinho = async (event) => {
   itensCart.appendChild(resultado);
   removerLoading();
   saveCartItems(itensCart.innerHTML);
+  precoTotal();
 };
 
 const encontrarItem = async (product) => {
@@ -80,18 +101,18 @@ const encontrarItem = async (product) => {
 };
 
 const apagarCarrinho = () => {
-  const produtos = document.querySelectorAll('.cart__item');
-  for (let index = 0; index < produtos.length; index += 1) {
-    itensCart.removeChild(produtos[index]);
-  }
+  itensCart.innerHTML = '';
+  precoTotal();
   localStorage.clear();
 };
+
 botaoApagar.addEventListener('click', apagarCarrinho);
 
 const recuperarLocalStorage = () => {
   itensCart.innerHTML = getSavedCartItems();
-    const itemCart = document.querySelectorAll('.cart__item');
+  const itemCart = document.querySelectorAll('.cart__item');
   itemCart.forEach((item) => item.addEventListener('click', cartItemClickListener));
+  precoTotal();
 };
 
 window.onload = async () => {
