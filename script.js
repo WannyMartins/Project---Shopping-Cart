@@ -36,6 +36,16 @@ function cartItemClickListener(event) {
 function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
+const esperarLoading = () => {
+  const mensagem = document.createElement('p');
+  mensagem.classList = 'loading';
+  mensagem.innerText = 'carregando...';
+  document.querySelector('.container-title').appendChild(mensagem);
+};
+
+const removerLoading = () => {
+  document.querySelector('.loading').remove();
+};
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
@@ -47,15 +57,19 @@ function createCartItemElement({ sku, name, salePrice }) {
 // tive ajuda dos colegas de turma Sheila Allelo, e Wendryo para desenvolver a logica de por o item no carrinho.
 const itemParaCarrinho = async (event) => {
   const skuId = getSkuFromProductItem(event.target.parentElement);
+  esperarLoading();
   const response = await fetchItem(skuId);
   const objeto = { sku: skuId, name: response.title, salePrice: response.price };
   const resultado = createCartItemElement(objeto);
   itensCart.appendChild(resultado);
+  removerLoading();
   saveCartItems(itensCart.innerHTML);
 };
 
 const encontrarItem = async (product) => {
+  esperarLoading();
   const produtos = await fetchProducts(product);
+  removerLoading();
   produtos.results.forEach((element) => {
     const objeto = { sku: element.id, name: element.title, image: element.thumbnail };
     const resultado = createProductItemElement(objeto);
@@ -72,16 +86,18 @@ const apagarCarrinho = () => {
   }
   localStorage.clear();
 };
+botaoApagar.addEventListener('click', apagarCarrinho);
 
 const recuperarLocalStorage = () => {
   itensCart.innerHTML = getSavedCartItems();
-  const itemCart = document.querySelectorAll('.cart__item');
+    const itemCart = document.querySelectorAll('.cart__item');
   itemCart.forEach((item) => item.addEventListener('click', cartItemClickListener));
+
 };
 
-botaoApagar.addEventListener('click', apagarCarrinho);
 
 window.onload = async () => {
   await encontrarItem('computador');
   recuperarLocalStorage();
+
 };
