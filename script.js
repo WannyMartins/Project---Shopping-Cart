@@ -1,5 +1,6 @@
 const items = document.querySelector('.items');
 const itensCart = document.querySelector('.cart__items');
+const botaoApagar = document.querySelector('.empty-cart');
 
 function createProductImageElement(imageSource) {
   const img = document.createElement('img');
@@ -64,7 +65,23 @@ const encontrarItem = async (product) => {
   botaoAdd.forEach((element) => element.addEventListener('click', itemParaCarrinho));
 };
 
+const apagarCarrinho = () => {
+  const produtos = document.querySelectorAll('.cart__item');
+  for (let index = 0; index < produtos.length; index += 1) {
+    itensCart.removeChild(produtos[index]);
+  }
+  localStorage.clear();
+};
+
+const recuperarLocalStorage = () => {
+  itensCart.innerHTML = getSavedCartItems();
+  const itemCart = document.querySelectorAll('.cart__item');
+  itemCart.forEach((item) => item.addEventListener('click', cartItemClickListener));
+};
+
+botaoApagar.addEventListener('click', apagarCarrinho);
+
 window.onload = async () => {
   await encontrarItem('computador');
-  document.querySelector('.cart__items').innerHTML = getSavedCartItems();
+  recuperarLocalStorage();
 };
