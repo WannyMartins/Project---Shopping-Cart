@@ -92,12 +92,9 @@ const recuperarLocalStorage = () => {
   itensCart.innerHTML = getSavedCartItems();
     const itemCart = document.querySelectorAll('.cart__item');
   itemCart.forEach((item) => item.addEventListener('click', cartItemClickListener));
-
 };
-
 
 window.onload = async () => {
   await encontrarItem('computador');
   recuperarLocalStorage();
-
 };
