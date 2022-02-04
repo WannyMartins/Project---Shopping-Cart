@@ -13,7 +13,7 @@ const somaPreco = () => { // tive muita ajuda do Wendryo nesta parte
     const passandoParaNumero = Number(valorAposIndexOf);
     preco += passandoParaNumero;
   });
-  return preco // .toFixed(2); // toFixed()método arredonda a string para um número especificado de decimais. >>>> w3schools
+  return preco;// .toFixed(2); // toFixed()método arredonda a string para um número especificado de decimais. >>>> w3schools
 };
 
 const precoTotal = () => {
